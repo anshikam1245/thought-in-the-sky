@@ -109,7 +109,7 @@ Open `firebase.js` and replace the placeholder values:
 
 ```javascript
 const firebaseConfig = {
-  apiKey:            "AIzaSy...",           // ← paste your real values here
+  apiKey:            "YOUR_API_KEY",           // ← paste your real values here
   authDomain:        "your-project.firebaseapp.com",
   projectId:         "your-project-id",
   storageBucket:     "your-project.appspot.com",
