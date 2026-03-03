@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="Leave a thought in the sky. An anonymous, shared night sky where your words become stars — quiet, beautiful, and timeless." />
+  <meta name="author" content="Anshika Mittal" />
+  <meta name="theme-color" content="#050a18" />
+
+  <!-- Open Graph / Social Sharing -->
+  <meta property="og:title" content="Leave a Thought in the Sky" />
+  <meta property="og:description" content="An anonymous shared night sky where your thoughts become glowing stars." />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="og-preview.png" />
+  <meta property="og:url" content="https://your-site-url.com" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Leave a Thought in the Sky" />
+  <meta name="twitter:description" content="Your words, turned into stars. Anonymous. Shared. Forever." />
+  <meta name="twitter:image" content="og-preview.png" />
+
+  <!-- Favicon -->
+  <link rel="icon" href="favicon.ico" type="image/x-icon" />
+  <link rel="shortcut icon" href="favicon.ico" />
+
+  <!-- Google Fonts: Cormorant Garamond (poetic display) + Lato (clean body) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Lato:wght@300;400&display=swap" rel="stylesheet" />
+
+  <title>Leave a Thought in the Sky</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ════════════════════════════════════════
+       LOADING SCREEN — fades out on load
+  ════════════════════════════════════════ -->
+  <div id="loading-screen">
+    <div class="loading-inner">
+      <p class="loading-label">gathering the stars…</p>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       CANVAS — full-screen night sky
+  ════════════════════════════════════════ -->
+  <canvas id="sky-canvas"></canvas>
+
+  <!-- ════════════════════════════════════════
+       HEADER — title and subtitle
+  ════════════════════════════════════════ -->
+  <header id="site-header">
+    <h1 class="site-title">Leave a Thought <em>in the Sky</em></h1>
+    <p class="site-subtitle">Every star is someone's secret</p>
+  </header>
+
+  <!-- ════════════════════════════════════════
+       STAR COUNT — live counter
+  ════════════════════════════════════════ -->
+  <div id="star-count-display">
+    <span id="star-count">0</span> thoughts in the sky
+  </div>
+
+  <!-- ════════════════════════════════════════
+       TOOLTIP — shown when hovering a star
+  ════════════════════════════════════════ -->
+  <div id="thought-tooltip" aria-live="polite">
+    <button id="tooltip-close" aria-label="Close">&times;</button>
+    <p id="tooltip-text"></p>
+    <span id="tooltip-time"></span>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       INPUT AREA — bottom of screen
+  ════════════════════════════════════════ -->
+  <div id="input-area">
+    <div class="input-wrapper">
+      <textarea
+        id="thought-input"
+        placeholder="leave a thought in the sky…"
+        maxlength="1000"
+        rows="1"
+        aria-label="Enter your thought"
+      ></textarea>
+      <div class="input-footer">
+        <span id="char-count">1000</span>
+        <button id="submit-btn" aria-label="Send thought to the sky">
+          <span class="btn-text">send to the sky</span>
+          <span class="btn-icon">✦</span>
+        </button>
+      </div>
+    </div>
+    <p class="input-note">anonymous · no account needed · lost among the stars</p>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       TOAST NOTIFICATION
+  ════════════════════════════════════════ -->
+  <div id="toast" role="status" aria-live="polite"></div>
+
+  <!-- Firebase SDK (compat version — easy to read) -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+
+  <!-- Our Firebase setup -->
+  <script src="firebase.js"></script>
+
+  <!-- Main logic -->
+  <script src="script.js"></script>
+</body>
+</html>

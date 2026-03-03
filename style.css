@@ -1,0 +1,419 @@
+/* ═══════════════════════════════════════════════════════
+   LEAVE A THOUGHT IN THE SKY — style.css
+   Deep night sky aesthetic: dark, atmospheric, emotional
+═══════════════════════════════════════════════════════ */
+
+/* ── CSS Custom Properties ────────────────────────────── */
+:root {
+  --sky-deep:      #050a18;   /* near-black navy */
+  --sky-mid:       #0b1530;   /* deep midnight blue */
+  --sky-horizon:   #101e3f;   /* subtle blue tint at horizon */
+  --star-glow:     #c8d8ff;   /* cold blue-white star light */
+  --star-warm:     #ffe8b0;   /* warm golden star light */
+  --star-rare:     #ffb3c6;   /* rare pink star */
+  --text-primary:  #d4e0ff;   /* soft celestial white */
+  --text-muted:    #5a6a8a;   /* dim secondary text */
+  --accent:        #3a6fff;   /* electric blue accent */
+  --glass-bg:      rgba(5, 10, 30, 0.75);
+  --glass-border:  rgba(100, 140, 255, 0.12);
+  --font-display:  'Cormorant Garamond', Georgia, serif;
+  --font-body:     'Lato', 'Helvetica Neue', sans-serif;
+}
+
+/* ── Reset & Base ─────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden; /* sky fills the viewport */
+  background: var(--sky-deep);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-weight: 300;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Canvas — fills entire screen ────────────────────── */
+#sky-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  /* subtle radial gradient atmosphere via CSS — layered under canvas */
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 100%, #0d1a3a 0%, transparent 70%),
+    radial-gradient(ellipse 60% 40% at 30% 0%,   #0a0f25 0%, transparent 60%),
+    linear-gradient(180deg, #050a18 0%, #0b1530 60%, #101e3f 100%);
+}
+
+/* ── Loading Screen ───────────────────────────────────── */
+#loading-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: var(--sky-deep);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* fades out via JS class toggle */
+  transition: opacity 1.4s ease, visibility 1.4s ease;
+}
+
+#loading-screen.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.loading-inner {
+  text-align: center;
+}
+
+.loading-label {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: clamp(1rem, 3vw, 1.4rem);
+  color: var(--text-muted);
+  letter-spacing: 0.12em;
+  animation: breathe 2.4s ease-in-out infinite;
+}
+
+@keyframes breathe {
+  0%, 100% { opacity: 0.3; }
+  50%       { opacity: 1; }
+}
+
+/* ── Site Header ──────────────────────────────────────── */
+#site-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  padding: clamp(1.2rem, 4vw, 2.2rem) clamp(1.5rem, 5vw, 3rem);
+  pointer-events: none; /* let stars be clickable through it */
+  /* fade in on load */
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 1.6s ease 0.8s, transform 1.6s ease 0.8s;
+}
+
+#site-header.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.site-title {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(1.4rem, 5vw, 2.8rem);
+  color: var(--text-primary);
+  letter-spacing: 0.04em;
+  line-height: 1.2;
+  text-shadow: 0 0 40px rgba(100, 160, 255, 0.25);
+}
+
+.site-title em {
+  font-style: italic;
+  color: var(--star-glow);
+}
+
+.site-subtitle {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: clamp(0.75rem, 2.5vw, 1rem);
+  color: var(--text-muted);
+  margin-top: 0.3rem;
+  letter-spacing: 0.08em;
+}
+
+/* ── Star Count ───────────────────────────────────────── */
+#star-count-display {
+  position: fixed;
+  top: clamp(1.2rem, 4vw, 2.2rem);
+  right: clamp(1.5rem, 5vw, 3rem);
+  z-index: 10;
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 0;
+  transition: opacity 1.6s ease 1.2s;
+}
+
+#star-count-display.visible {
+  opacity: 1;
+}
+
+#star-count {
+  color: var(--star-glow);
+  font-weight: 400;
+}
+
+/* ── Thought Tooltip ──────────────────────────────────── */
+#thought-tooltip {
+  position: fixed;
+  z-index: 200;
+  max-width: min(340px, 90vw);
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  padding: 1.2rem 1.4rem;
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  box-shadow:
+    0 0 0 1px rgba(100, 160, 255, 0.06),
+    0 20px 60px rgba(0, 0, 0, 0.6),
+    0 0 30px rgba(60, 100, 255, 0.08);
+  /* hidden by default */
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(8px) scale(0.97);
+  transition:
+    opacity 0.3s ease,
+    visibility 0.3s ease,
+    transform 0.3s ease;
+  pointer-events: none;
+}
+
+#thought-tooltip.visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scale(1);
+  pointer-events: all;
+}
+
+#tooltip-close {
+  position: absolute;
+  top: 0.6rem;
+  right: 0.8rem;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 1.1rem;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0.2rem 0.4rem;
+  transition: color 0.2s;
+}
+
+#tooltip-close:hover {
+  color: var(--text-primary);
+}
+
+#tooltip-text {
+  font-family: var(--font-display);
+  font-size: clamp(1rem, 2.5vw, 1.2rem);
+  font-style: italic;
+  line-height: 1.65;
+  color: var(--text-primary);
+  padding-right: 1.2rem; /* clear the close button */
+  word-break: break-word;
+}
+
+#tooltip-time {
+  display: block;
+  margin-top: 0.8rem;
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* ── Input Area ───────────────────────────────────────── */
+#input-area {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  padding: clamp(1rem, 3vw, 1.8rem) clamp(1rem, 4vw, 2rem);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  /* subtle gradient mask so it fades into the sky */
+  background: linear-gradient(to top, rgba(5, 10, 24, 0.95) 0%, transparent 100%);
+  padding-top: 3rem;
+  /* fade in */
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 1.6s ease 1s, transform 1.6s ease 1s;
+}
+
+#input-area.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.input-wrapper {
+  width: 100%;
+  max-width: 600px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 14px;
+  padding: 1rem 1.2rem 0.7rem;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow:
+    0 0 0 1px rgba(100, 160, 255, 0.05),
+    0 12px 40px rgba(0, 0, 0, 0.5);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.input-wrapper:focus-within {
+  border-color: rgba(100, 160, 255, 0.28);
+  box-shadow:
+    0 0 0 1px rgba(100, 160, 255, 0.1),
+    0 12px 40px rgba(0, 0, 0, 0.5),
+    0 0 24px rgba(60, 110, 255, 0.08);
+}
+
+#thought-input {
+  width: 100%;
+  background: none;
+  border: none;
+  outline: none;
+  resize: none;
+  color: var(--text-primary);
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: clamp(0.95rem, 2.5vw, 1.15rem);
+  line-height: 1.5;
+  caret-color: var(--star-glow);
+}
+
+#thought-input::placeholder {
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.input-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 0.6rem;
+}
+
+#char-count {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  letter-spacing: 0.06em;
+  transition: color 0.3s;
+}
+
+#char-count.warning {
+  color: #ff8a65;
+}
+
+/* ── Submit Button ────────────────────────────────────── */
+#submit-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: none;
+  border: 1px solid rgba(100, 160, 255, 0.22);
+  border-radius: 30px;
+  padding: 0.45rem 1.1rem;
+  color: var(--star-glow);
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  text-transform: lowercase;
+  cursor: pointer;
+  transition:
+    background 0.3s ease,
+    border-color 0.3s ease,
+    box-shadow 0.3s ease,
+    transform 0.15s ease;
+}
+
+#submit-btn:hover {
+  background: rgba(100, 160, 255, 0.1);
+  border-color: rgba(100, 160, 255, 0.45);
+  box-shadow: 0 0 18px rgba(60, 110, 255, 0.2);
+}
+
+#submit-btn:active {
+  transform: scale(0.96);
+}
+
+#submit-btn:disabled {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.btn-icon {
+  font-size: 0.85rem;
+  animation: spin-slow 8s linear infinite;
+  display: inline-block;
+}
+
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.input-note {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  letter-spacing: 0.1em;
+  text-align: center;
+  opacity: 0.6;
+}
+
+/* ── Toast Notification ───────────────────────────────── */
+#toast {
+  position: fixed;
+  bottom: clamp(7rem, 20vw, 10rem);
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  z-index: 300;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 30px;
+  padding: 0.55rem 1.4rem;
+  font-size: 0.8rem;
+  color: var(--star-glow);
+  letter-spacing: 0.08em;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.4s ease, transform 0.4s ease, visibility 0.4s ease;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+#toast.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ── Responsive Tweaks ────────────────────────────────── */
+@media (max-width: 480px) {
+  .site-title {
+    font-size: 1.3rem;
+  }
+  #star-count-display {
+    display: none; /* tidy on small screens */
+  }
+}
+
+/* ── Accessibility: prefers-reduced-motion ────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
