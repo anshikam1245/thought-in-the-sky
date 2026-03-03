@@ -16,7 +16,7 @@
 //    Replace every value that says "YOUR_..." with your real config values.
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyDBWAMe-WLkqQaxwhLyMKGHdP9iFRdoswY",
+  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
   authDomain: "thought-in-the-sky-a9609.firebaseapp.com",
   projectId: "thought-in-the-sky-a9609",
   storageBucket: "thought-in-the-sky-a9609.firebasestorage.app",
